@@ -1,0 +1,349 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Freedom: Learn the Basics of Financial Literacy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            color: #333;
+            background-color: #F5F6F5;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(to right, #4A90E2, #357abd), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#50C878" stroke-width="2" opacity="0.2"/></svg>');
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        .hero {
+            height: 60vh;
+            background: linear-gradient(to right, #4A90E2, #50C878), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><path d="M50 150 L100 50 L150 150" fill="none" stroke="#F5F6F5" stroke-width="3" opacity="0.3"/><circle cx="100" cy="100" r="20" fill="#50C878" opacity="0.2"/></svg>');
+            background-blend-mode: overlay;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 0 1rem;
+        }
+
+        .hero-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .cta-button {
+            background-color: #50C878;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .cta-button:hover {
+            background-color: #45a56a;
+        }
+
+        .section {
+            padding: 3rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" fill="none" stroke="#4A90E2" stroke-width="2" opacity="0.2"/></svg>');
+            background-color: #F5F6F5;
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #4A90E2;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .topic-card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .topic-card h3 {
+            font-size: 1.5rem;
+            color: #4A90E2;
+            margin-bottom: 1rem;
+        }
+
+        .topic-card p {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .topic-card ul {
+            list-style: disc;
+            margin-left: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .interest-form {
+            max-width: 600px;
+            margin: 2rem auto;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .interest-form h3 {
+            font-size: 1.5rem;
+            color: #4A90E2;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .interest-form input,
+        .interest-form textarea,
+        .interest-form select {
+            width: 100%;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .interest-form .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .interest-form button {
+            background-color: #50C878;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .interest-form button:hover {
+            background-color: #45a56a;
+        }
+
+        footer {
+            background: linear-gradient(to right, #4A90E2, #357abd), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#50C878" stroke-width="2" opacity="0.2"/></svg>');
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 0.5rem;
+        }
+
+        footer a:hover {
+            color: #50C878;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h2 {
+                font-size: 1.8rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Financial Freedom: Learn the Basics of Financial Literacy</h1>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Master Money Basics Stress-Free!</h2>
+            <p>Explore simple lessons on key financial topics for high-school and college students. Join our interest list to stay updated!</p>
+            <a href="#interest" class="cta-button">Show Interest</a>
+        </div>
+    </section>
+
+    <section id="topics" class="section">
+        <h2>Financial Literacy Topics</h2>
+        <div class="topics-grid">
+            <div class="topic-card">
+                <h3>Self-Directed Investing</h3>
+                <p>Learn to grow your money by choosing investments like stocks and ETFs.</p>
+                <ul>
+                    <li>Understand stocks and ETFs</li>
+                    <li>Diversify your portfolio</li>
+                    <li>Use apps like Robinhood</li>
+                </ul>
+            </div>
+            <div class="topic-card">
+                <h3>Debt Management</h3>
+                <p>Manage debts like student loans and credit cards effectively.</p>
+                <ul>
+                    <li>Prioritize high-interest debts</li>
+                    <li>Make consistent payments</li>
+                    <li>Avoid new debt traps</li>
+                </ul>
+            </div>
+            <div class="topic-card">
+                <h3>Budgeting</h3>
+                <p>Control your spending with simple rules and tools.</p>
+                <ul>
+                    <li>50/30/20 rule</li>
+                    <li>Track expenses</li>
+                    <li>Set savings goals</li>
+                </ul>
+            </div>
+            <div class="topic-card">
+                <h3>Tax Strategies</h3>
+                <p>Understand basic taxes and deductions for beginners.</p>
+                <ul>
+                    <li>Know W-2 and W-4 forms</li>
+                    <li>Claim deductions</li>
+                    <li>File early</li>
+                </ul>
+            </div>
+            <div class="topic-card">
+                <h3>Retirement Planning</h3>
+                <p>Start planning for your future with easy steps.</p>
+                <ul>
+                    <li>401(k) and IRA basics</li>
+                    <li>Compound interest</li>
+                    <li>Employer matches</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="interest" class="section">
+        <div class="interest-form">
+            <h3>Show Your Interest</h3>
+            <p>Sign up to get updates and share your thoughts!</p>
+            <form id="interest-form">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="email" id="email" placeholder="Your Email" required>
+                <input type="text" id="age" placeholder="Your Age (optional)">
+                <label>Which topics interest you? (Select all that apply)</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="topics" value="Investing"> Investing</label>
+                    <label><input type="checkbox" name="topics" value="Debt"> Debt Management</label>
+                    <label><input type="checkbox" name="topics" value="Budgeting"> Budgeting</label>
+                    <label><input type="checkbox" name="topics" value="Taxes"> Tax Strategies</label>
+                    <label><input type="checkbox" name="topics" value="Retirement"> Retirement Planning</label>
+                </div>
+                <textarea id="comments" placeholder="Comments or Suggestions" rows="4"></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Financial Freedom: Learn the Basics of Financial Literacy. All rights reserved.</p>
+        <p><a href="#">Privacy Policy</a></p>
+    </footer>
+
+    <script>
+        // Form validation
+        document.querySelector('#interest-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const name = document.querySelector('#name').value;
+            const email = document.querySelector('#email').value;
+            const age = document.querySelector('#age').value;
+            const topics = Array.from(document.querySelectorAll('input[name="topics"]:checked')).map(input => input.value);
+            const comments = document.querySelector('#comments').value;
+
+            if (!name || !email) {
+                alert('Please fill in name and email.');
+            } else if (/^\S+@\S+\.\S+$/.test(email)) {
+                alert(`Thank you, ${name}! Your interest has been noted. (This is a demo.)`);
+                console.log({ name, email, age, topics, comments }); // For testing; integrate with backend in production
+                e.target.reset();
+            } else {
+                alert('Please enter a valid email address.');
+            }
+        });
+    </script>
+</body>
+</html>
